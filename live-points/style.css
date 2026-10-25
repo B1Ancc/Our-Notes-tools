@@ -87,3 +87,11 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 
 .fh { color: var(--muted); font-size: 13px; }
 .warn { color: var(--accent); font-size: 12px; margin-left: 8px; font-family: var(--font-body); font-weight: 600; }
+
+/* Log plays */
+.logrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 12px 16px; border-top: 1px solid var(--line); }
+.logbar .head { border-bottom: 0; }
+.logtxt { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; min-width: 0; }
+.logtxt small { flex-basis: 100%; color: var(--muted); font-size: 12.5px; }
+.logtxt select { width: auto; padding: 5px 8px; }
+.logrow button { min-width: 64px; min-height: 44px; font-size: 16px; }

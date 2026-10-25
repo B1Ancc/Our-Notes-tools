@@ -48,6 +48,21 @@ test('plan multiplies per-song rewards by songs', () => {
   assert.deepEqual(p, { songs: 10, spent: 10, ep: 3750, bd: 4500, cp: 400 });
 });
 
+test('logPlay: a Free Live adds its rewards and CP, -1 undoes it', () => {
+  const h0 = { ep: 0, bd: 0, cp: 0 };
+  const h1 = C.logPlay(h0, 'free', 'S', 1, none, 1);
+  assert.deepEqual(h1, { ep: 375, bd: 450, cp: 40 });
+  assert.deepEqual(C.logPlay(h1, 'free', 'S', 1, none, -1), h0);
+  assert.deepEqual(C.logPlay(h0, 'free', 'S', 1, none, -1), h0);      // never below 0
+});
+
+test('logPlay: a Challenge Live adds points and badges and spends CP', () => {
+  const h = C.logPlay({ ep: 10, bd: 20, cp: 500 }, 'ch', 'S', 200, none, 1);
+  assert.deepEqual(h, { ep: 4510, bd: 4920, cp: 300 });
+  assert.equal(C.logPlay({ ep: 0, bd: 0, cp: 100 }, 'ch', 'S', 200, none, 1).cp, 0);  // CP stops at 0
+  assert.equal(C.logPlay({ ep: 0, bd: 0, cp: 0 }, 'free', 'S', 1, none, 1, 100).ep, 100); // max cap
+});
+
 test('songsFor rounds up and handles zero rewards', () => {
   assert.equal(C.songsFor(375, 3751), 11);
   assert.equal(C.songsFor(0, 100), null);

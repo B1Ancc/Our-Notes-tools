@@ -4,7 +4,7 @@
   const { $, nf, seg, num, setValue, store } = UI;
   const D = LiveData, C = LiveCalc, S = LiveState;
   const { RANKS, CHALLENGE_CP, SHOP } = D;
-  const { perSong, plan, songsFor, freeOpts, planOpts, freeMult, betterPlan, bestForFlames } = C;
+  const { perSong, plan, logPlay, songsFor, freeOpts, planOpts, freeMult, betterPlan, bestForFlames } = C;
 
   const STORE_KEY = 'ournotes.live-points.v1', LEGACY_KEY = 'liveCalc2';
   const TARGET_LABEL = { ep: 'event points', bd: 'badges', cp: 'CP' };
@@ -123,11 +123,55 @@
       <div class="hint">Each row shows everything those songs give, so the amount you reach can be a little over the goal.${haveHint}${fundHint}</div></section>`;
     }
     $('results').innerHTML = h;
+    renderLog();
 
     $('refSub').textContent = `${costText(t, c.opt)} per song, ${bonusText(c.bonus)}`;
     $('ref').innerHTML = `<thead><tr><th>Rank</th><th>Event points</th><th>Badges</th>${free ? '<th>CP</th>' : ''}</tr></thead><tbody>` +
       RANKS.map(r => { const p = perSong(t, r, c.opt, c.bonus); return `<tr${r === st.rank ? ' class="sel"' : ''}><td>${r}</td><td>${nf(p.ep)}</td><td>${nf(p.bd)}</td>${free ? `<td>${nf(p.cp)}</td>` : ''}</tr>`; }).join('') + '</tbody>';
     updateShop();
+  }
+
+  /* ---------- Log plays: +1 after each finished song, -1 to undo ---------- */
+
+  let logCtx = {};                 // what each +1 / -1 button applies, set by renderLog
+  let pickFo = null, pickCo = null; // Plan both: the levels chosen in the log, or null for the best plan's
+
+  const gain = (tab, rank, opt, bonus) => {
+    const p = perSong(tab, rank, opt, bonus);
+    return `+${nf(p.ep)} points, +${nf(p.bd)} badges, ${tab === 'free' ? `+${nf(p.cp)}` : `−${nf(opt)}`} CP`;
+  };
+  const logButtons = kind => `<div class="btns"><button type="button" data-kind="${kind}" data-d="-1" aria-label="Remove one ${kind === 'free' ? 'Free' : 'Challenge'} Live">−1</button><button type="button" class="primary" data-kind="${kind}" data-d="1" aria-label="Add one ${kind === 'free' ? 'Free' : 'Challenge'} Live">+1</button></div>`;
+  const logRow = (kind, title, picker, rank, opt, bonus) =>
+    `<div class="logrow"><div class="logtxt"><strong>${title}</strong>${picker || ` <span class="dim">${optLabel(kind, opt)[1]}, rank ${rank}</span>`}<small>${gain(kind, rank, opt, bonus)} per song</small></div>${logButtons(kind)}</div>`;
+  const picker = (id, kind, opts, value) =>
+    `<select id="${id}" aria-label="${kind === 'free' ? 'Flames' : 'CP'} for the log">${opts.map(o => `<option value="${o}"${o === value ? ' selected' : ''}>${optLabel(kind, o)[1]}</option>`).join('')}</select>`;
+
+  function renderLog(best) {
+    const t = st.tab, h = st.have;
+    let rows = '';
+    if (t === 'free') {
+      logCtx = { free: { rank: st.rank, opt: st.free.opt, bonus: st.free.bonus } };
+      rows = logRow('free', 'Free Live', null, st.rank, st.free.opt, st.free.bonus);
+    } else if (t === 'ch') {
+      logCtx = { ch: { rank: st.rank, opt: st.ch.opt, bonus: st.ch.bonus } };
+      rows = logRow('ch', 'Challenge Live', null, st.rank, st.ch.opt, st.ch.bonus);
+    } else {
+      const o = st.opt, fl = freeOpts(st.player);
+      const fo = fl.includes(pickFo) ? pickFo : (best && fl.includes(best.fo) ? best.fo : 1);
+      const co = CHALLENGE_CP.includes(pickCo) ? pickCo : (best ? best.co : 200);
+      logCtx = { free: { rank: o.fr, opt: fo, bonus: o.fb }, ch: { rank: o.cr, opt: co, bonus: o.cb } };
+      rows = logRow('free', 'Free Live', ' ' + picker('logFo', 'free', fl, fo) + ` <span class="dim">rank ${o.fr}</span>`, o.fr, fo, o.fb) +
+             logRow('ch', 'Challenge Live', ' ' + picker('logCo', 'ch', CHALLENGE_CP, co) + ` <span class="dim">rank ${o.cr}</span>`, o.cr, co, o.cb);
+    }
+    $('logPanel').innerHTML = `<div class="head"><h2>Log plays</h2><span>Have ${nf(h.ep)} points, ${nf(h.bd)} badges, ${nf(h.cp)} CP</span></div>${rows}` +
+      `<div class="hint">+1 adds a finished song to what you already have. −1 takes one back. A Challenge Live also spends its CP.</div>`;
+  }
+
+  function onLog(e) {
+    const b = e.target.closest('button[data-kind]'); if (!b) return;
+    const c = logCtx[b.dataset.kind]; if (!c) return;
+    st.have = logPlay(st.have, b.dataset.kind, c.rank, c.opt, c.bonus, +b.dataset.d, S.MAX.have);
+    render();
   }
 
   /* ---------- Plan both lives tab ---------- */
@@ -174,6 +218,7 @@
       }).join('') + `</tbody></table></div>
     <div class="hint">Each row plays up to one 10 flame Live a day, then uses that flame level for the other Free Lives. The shaded row is the best plan for what you chose to minimise. Event points and badges are what the plan earns, on top of what you already have.</div></section>`;
     $('results').innerHTML = h;
+    renderLog(best);
     updateShop();
   }
 
@@ -219,6 +264,13 @@
     bindOpt('oHave', el => { st.have[st.opt.target] = whole(el, S.MAX.have); });
     bindOpt('oCP0', el => { st.have.cp = whole(el, S.MAX.have); });
     bindOpt('oFl', el => { const v = parseFloat(el.value); st.opt.flames = isFinite(v) && v >= 0 ? Math.min(Math.floor(v), S.MAX.flames) : null; });
+    $('logPanel').addEventListener('click', onLog);
+    $('logPanel').addEventListener('change', e => {
+      if (e.target.id === 'logFo') pickFo = +e.target.value;
+      else if (e.target.id === 'logCo') pickCo = +e.target.value;
+      else return;
+      renderOpt();
+    });
     $('oTarget').addEventListener('change', e => { st.opt.target = e.target.value; render(); });
 
     $('daysMain').addEventListener('input', e => { days = whole(e.target, C.MAX_DAYS); $('daysOpt').value = days; update(); });

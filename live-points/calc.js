@@ -30,6 +30,15 @@
     return { songs, spent: songs * opt, ep: p.ep * songs, bd: p.bd * songs, cp: p.cp * songs };
   }
 
+  /* Log one finished song (sign +1) or undo one (sign -1) on a `have` total {ep, bd, cp}.
+     A Free Live adds its CP; a Challenge Live spends `opt` CP. Nothing goes below 0 or above max. */
+  function logPlay(have, tab, rank, opt, bonus, sign, max) {
+    max = max || 1e9;
+    const p = perSong(tab, rank, opt, bonus), cp = tab === 'free' ? p.cp : -opt;
+    const add = (v, d) => Math.min(Math.max(0, v + sign * d), max);
+    return { ep: add(have.ep, p.ep), bd: add(have.bd, p.bd), cp: add(have.cp, cp) };
+  }
+
   /* Songs needed to earn `amount` at `per` each, or null if a song gives nothing. */
   const songsFor = (per, amount) => per > 0 ? Math.ceil(amount / per) : null;
 
@@ -82,5 +91,5 @@
     return best;
   }
 
-  return { MAX_DAYS, freeIdx, freeMult, bonusFloor, perSong, plan, songsFor, freeOpts, planOpts, daysToSaturday, betterPlan, solveOpt, bestForFlames };
+  return { MAX_DAYS, freeIdx, freeMult, bonusFloor, perSong, plan, logPlay, songsFor, freeOpts, planOpts, daysToSaturday, betterPlan, solveOpt, bestForFlames };
 }));
