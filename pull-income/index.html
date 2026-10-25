@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pull Income Calculator</title>
+<meta name="description" content="How many pulls you earn per day, week and month with and without an Our Notes pass, and how long it takes to save up for a goal.">
+<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1520" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f54d4'/%3E%3Cpath d='M9 23V9h8a4.5 4.5 0 010 9h-5v5z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@85..100,500..800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Pull Income</h1>
+    <p class="sub">How many pulls you earn per day, week and month, with and without an Our Notes pass.</p>
+  </header>
+  <noscript><p class="sub">This calculator needs JavaScript.</p></noscript>
+
+  <div class="seg" id="scenario" role="radiogroup" aria-label="Scenario"></div>
+
+  <label class="toggle" for="mp">
+    <input type="checkbox" id="mp">
+    <div>
+      <strong>Buy Premium Mission Pass (Event)</strong>
+      <span>Adds 320 Paid Stars a week (1,280 a month, 1.6 pulls a week). Optional. It applies to every option, F2P included.</span>
+    </div>
+  </label>
+
+  <label class="toggle" for="sp">
+    <input type="checkbox" id="sp">
+    <div>
+      <strong>Buy Season Mission Pass</strong>
+      <span>The free track is always counted, at 200 Stars a month. Buying the pass adds 1,500 Stars a month on top. Optional, and it applies to every option.</span>
+    </div>
+  </label>
+
+  <section class="panel" aria-live="polite">
+    <div class="panel-head">
+      <h2 id="title"></h2>
+      <div class="period" id="period" role="radiogroup" aria-label="Period" hidden></div>
+    </div>
+    <div class="scroll"><table id="tbl"></table></div>
+  </section>
+
+  <section class="panel" aria-live="polite">
+    <div class="panel-head"><h2>Saving up</h2></div>
+    <div class="plan-grid">
+      <div class="field"><label class="l" for="hStars">Stars you have</label><input type="number" id="hStars" min="0" step="1" inputmode="numeric"></div>
+      <div class="field"><label class="l" for="hTickets">Our Notes tickets you have</label><input type="number" id="hTickets" min="0" step="1" inputmode="numeric"></div>
+      <div class="field"><label class="l" for="goal">Pulls you want</label><input type="number" id="goal" min="0" step="1" inputmode="numeric"></div>
+      <div class="field"><label class="l" for="until">Save until</label><input type="date" id="until"></div>
+      <div class="field wide"><span class="l">Pulls that count</span><div class="seg" id="count" role="radiogroup" aria-label="Pulls that count"></div></div>
+    </div>
+    <div class="scroll"><table id="plan"></table></div>
+    <div class="plan-hint" id="planHint"></div>
+  </section>
+
+  <div class="notes">
+    <p>Event tickets are 3 Our Notes tickets per event, with four events a month.</p>
+    <p>Star pulls are Stars divided by 200. Average daily income may be inaccurate until more data is gathered.</p>
+    <p>Each pass option is one pass on its own. It is not stacked with the others.</p>
+    <p>The Premium Mission Pass can be added to any option, F2P included. The free Season Mission Pass track is always counted. The Season Mission Pass counts in the monthly column only.</p>
+  </div>
+
+  <details class="how" open>
+    <summary>How income is calculated</summary>
+
+    <h3>Base income (everyone)</h3>
+    <ul>
+      <li>Daily: login 20 + daily mission 15 = <code>35 Stars</code></li>
+      <li>Weekly: <code>35 × 7</code> + weekly stamp 160 + one event (360 reward + 400 story) = <code>1,165 Stars</code></li>
+      <li>Monthly: <code>35 × 30</code> + stamp <code>160 × 4</code> + events <code>760 × 4</code> + Season Mission Pass free track <code>200</code> = <code>4,930 Stars</code></li>
+    </ul>
+
+    <h3>Pass income added</h3>
+    <div class="scroll"><table>
+      <thead><tr><th>Pass</th><th>Free Stars / day</th><th>Paid Stars / month</th><th>Extra pull</th></tr></thead>
+      <tbody>
+        <tr><td>Lite</td><td>10</td><td>400</td><td>1 Exclusive / week</td></tr>
+        <tr><td>Standard</td><td>30</td><td>1,200</td><td>1 Dedicated / week</td></tr>
+        <tr><td>Premium</td><td>60</td><td>2,400</td><td>1 Dedicated / week + 1 Pickup / day</td></tr>
+        <tr><td>Premium Mission Pass</td><td>–</td><td>320 / week</td><td>–</td></tr>
+        <tr><td>Season Mission Pass, bought</td><td>–</td><td>1,500 / month</td><td>–</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Daily Stars = 35 + the pass's free Stars</li>
+      <li>Weekly Stars = 1,165 + free Stars × 7 (+ 320 with Mission Pass)</li>
+      <li>Monthly Stars = 4,930 + free Stars × 30 + paid Stars (+ 320 × 4 with Mission Pass, + 1,500 with a bought Season Mission Pass)</li>
+    </ul>
+
+    <h3>Turning income into pulls</h3>
+    <ul>
+      <li>Star pulls = Stars ÷ 200</li>
+      <li>Event tickets = 3 per event: <code>3</code> a week, <code>12</code> a month, none counted daily</li>
+      <li>Exclusive and Dedicated pulls are weekly, so they count <code>×4</code> in a month</li>
+      <li>Pickup pulls (Premium) = <code>1 × 7</code> a week, <code>1 × 30</code> a month</li>
+      <li>Total = star pulls + event tickets + Exclusive + Dedicated + Pickup</li>
+      <li>Our Notes only = star pulls + event tickets</li>
+      <li>Pickup only = star pulls + Pickup pulls</li>
+    </ul>
+  </details>
+</main>
+
+<script src="../assets/ui.js"></script>
+<script src="calc.js"></script>
+<script src="state.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+/* Pull Income: blue, Archivo and IBM Plex. Shared layout is in ../assets/base.css. */
+:root {
+  --bg: #eef1f6;
+  --surface: #ffffff;
+  --ink: #16202f;
+  --muted: #5d6b80;
+  --line: #d8dee8;
+  --accent: #2f54d4;
+  --accent-ink: #ffffff;
+  --accent-soft: #e4eafc;
+  --total-bg: #16202f;
+  --total-ink: #ffffff;
+  --bar: #2f54d4;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --gap: 20px; --stretch: 85%; --notes-w: 78ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1520; --surface: #172030; --ink: #e8edf6; --muted: #92a0b8; --line: #2a374c;
+    --accent: #7c9bff; --accent-ink: #0f1520; --accent-soft: #223056;
+    --total-bg: #e8edf6; --total-ink: #0f1520; --bar: #7c9bff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1520; --surface: #172030; --ink: #e8edf6; --muted: #92a0b8; --line: #2a374c;
+  --accent: #7c9bff; --accent-ink: #0f1520; --accent-soft: #223056;
+  --total-bg: #e8edf6; --total-ink: #0f1520; --bar: #7c9bff;
+  color-scheme: dark;
+}
+
+.seg label small { opacity: .75; font-weight: 400; }
+
+.toggle {
+  display: flex; gap: 12px; align-items: flex-start; background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+}
+.toggle input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none; }
+.toggle strong { font-weight: 600; }
+.toggle span { display: block; color: var(--muted); font-size: 13.5px; }
+
+.panel { overflow: hidden; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.panel-head h2 { font-family: var(--font-display); font-stretch: var(--stretch); font-size: 1.15rem; margin: 0; font-weight: 700; }
+tbody tr.sec td { background: var(--accent-soft); font-family: var(--font-body); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; padding-block: 5px; }
+td.zero { color: var(--muted); opacity: .6; }
+tr.total td { background: var(--total-bg); color: var(--total-ink); font-weight: 600; border-bottom: 0; }
+tr.total td:first-child { font-family: var(--font-display); font-stretch: var(--stretch); letter-spacing: .04em; }
+.bar { display: inline-block; height: 6px; background: var(--bar); border-radius: 3px; vertical-align: middle; margin-right: 8px; opacity: .85; }
+tr.total .bar { background: var(--total-ink); }
+
+.period { display: flex; gap: 4px; }
+.period input { position: absolute; opacity: 0; pointer-events: none; }
+.period label { cursor: pointer; padding: 4px 10px; border-radius: 4px; font-size: 13px; color: var(--muted); border: 1px solid transparent; }
+.period input:checked + label { color: var(--ink); border-color: var(--line); background: var(--accent-soft); font-weight: 600; }
+.period input:focus-visible + label { outline: 2px solid var(--accent); }
+
+/* Saving up */
+.plan-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px 20px; border-bottom: 1px solid var(--line); }
+/* Inputs sit at the bottom, so they line up when a label wraps to two lines. */
+.field { justify-content: flex-end; }
+.field input[type=number], .field input[type=date] { padding: 0 10px; height: 38px; }
+.plan-hint { padding: 10px 14px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+td.ok { color: var(--accent); font-weight: 600; }
+
+/* How income is calculated */
+.how { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0 14px; }
+.how[open] { padding-bottom: 12px; }
+.how summary { cursor: pointer; padding: 12px 0; font-family: var(--font-display); font-stretch: var(--stretch); font-weight: 700; font-size: 1.1rem; }
+.how[open] summary { border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.how h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 16px 0 6px; font-weight: 600; }
+.how ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.how code { font-family: var(--font-num); font-size: 13px; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+.how .scroll { margin: 0 -14px; }
+.how table td, .how table th { padding: 7px 14px; }

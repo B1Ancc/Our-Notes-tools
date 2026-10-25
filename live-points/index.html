@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Live Points Calculator</title>
+<meta name="description" content="Event points, badges and CP from Free Live and Challenge Live: how many songs, flames or CP a goal needs, and what the event shop costs.">
+<meta name="theme-color" content="#f5f3f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17121d" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d6285f'/%3E%3Cpath d='M12 8v11.5a3 3 0 11-2-2.8V8h9v3h-7z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Live Points Calculator</h1>
+    <p class="sub">Work out the event points, badges and CP from Free Live and Challenge Live, how many songs and flames or CP a goal needs, and what the event shop costs.</p>
+  </header>
+  <noscript><p class="sub">This calculator needs JavaScript.</p></noscript>
+
+  <div class="seg big" id="tab" role="radiogroup" aria-label="Live type"></div>
+
+  <section class="panel controls" id="ctlMain">
+    <div class="field"><span class="l">Rank you aim for</span><div class="seg" id="rank" role="radiogroup" aria-label="Rank"></div></div>
+    <div class="field" id="costField"><span class="l" id="costLabel"></span><div class="seg" id="cost" role="radiogroup" aria-label="Cost per song"></div></div>
+    <div class="field"><span class="l">Event points bonus</span><div class="inline"><input type="number" id="bonusEp" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field"><span class="l">Badges bonus</span><div class="inline"><input type="number" id="bonusBd" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field" id="playerField"><span class="l">Player type</span><div class="seg" id="player" role="radiogroup" aria-label="Player type"></div><span class="fh">4 and 5 flames are for spenders.</span></div>
+    <div class="field" id="daysField"><span class="l">Days left in the event</span><div class="inline"><input type="number" id="daysMain" min="0" max="14" step="1" inputmode="numeric"></div><span class="fh">The event ends on Saturday. 10 flame Lives are once a day.</span></div>
+    <div class="field"><span class="l">I want to</span><div class="seg" id="mode" role="radiogroup" aria-label="Mode"></div></div>
+    <div class="field wide" id="songsField"><span class="l">Number of songs</span><div class="inline"><input type="number" id="songs" min="0" step="1" inputmode="numeric"></div></div>
+    <div class="field" id="goalField"><span class="l">Goal</span>
+      <div class="inline"><select id="target" aria-label="Goal type"></select><input type="number" id="amount" min="0" step="1" inputmode="numeric" aria-label="Goal amount"></div>
+    </div>
+    <div class="field" id="haveField"><span class="l">You already have</span><input type="number" id="have" min="0" step="1" inputmode="numeric"><span class="fh">Only the rest of the goal is counted.</span></div>
+  </section>
+
+  <section class="panel controls" id="ctlOpt" hidden>
+    <div class="field"><span class="l">Goal</span>
+      <div class="inline"><select id="oTarget" aria-label="Goal type"><option value="ep">Event points</option><option value="bd">Badges</option></select><input type="number" id="oAmount" min="0" step="1" inputmode="numeric" aria-label="Goal amount"></div>
+    </div>
+    <div class="field"><span class="l">You already have</span><input type="number" id="oHave" min="0" step="1" inputmode="numeric"><span class="fh">Only the rest of the goal is counted.</span></div>
+    <div class="field"><span class="l">Free Live rank</span><div class="seg" id="oFR" role="radiogroup" aria-label="Free Live rank"></div></div>
+    <div class="field"><span class="l">Free Live event points bonus</span><div class="inline"><input type="number" id="oFBe" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field"><span class="l">Free Live badges bonus</span><div class="inline"><input type="number" id="oFBb" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field"><span class="l">Challenge Live rank</span><div class="seg" id="oCR" role="radiogroup" aria-label="Challenge Live rank"></div></div>
+    <div class="field"><span class="l">Challenge Live event points bonus</span><div class="inline"><input type="number" id="oCBe" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field"><span class="l">Challenge Live badges bonus</span><div class="inline"><input type="number" id="oCBb" min="0" step="1" inputmode="decimal"><em>%</em></div></div>
+    <div class="field"><span class="l">CP you already have</span><input type="number" id="oCP0" min="0" step="1" inputmode="numeric"></div>
+    <div class="field"><span class="l">Flames you can spend</span><input type="number" id="oFl" min="0" step="1" inputmode="numeric" placeholder="No limit"></div>
+    <div class="field"><span class="l">Player type</span><div class="seg" id="oPlayer" role="radiogroup" aria-label="Player type"></div><span class="fh">4 and 5 flames are for spenders.</span></div>
+    <div class="field"><span class="l">Days left in the event</span><div class="inline"><input type="number" id="daysOpt" min="0" max="14" step="1" inputmode="numeric"></div><span class="fh">The event ends on Saturday. 10 flame Lives are once a day.</span></div>
+    <div class="field wide"><span class="l">Use as few as possible</span><div class="seg" id="oObj" role="radiogroup" aria-label="Objective"></div></div>
+  </section>
+
+  <div id="results" aria-live="polite"></div>
+
+  <section class="panel" id="refPanel">
+    <div class="head"><h2>Every rank, per song</h2><span id="refSub"></span></div>
+    <div class="scroll"><table id="ref"></table></div>
+  </section>
+
+  <section class="panel shop" id="shopPanel">
+    <div class="head"><h2>Event shop</h2><span>Costs are in badges</span></div>
+    <div class="scroll"><table id="shop"></table></div>
+    <div class="foot">
+      <div class="tot" id="shopTotal"></div>
+      <div class="btns">
+        <button type="button" id="shopMax">Max all</button>
+        <button type="button" id="shopClear">Clear</button>
+        <button type="button" class="primary" id="shopGoal">Use total as goal</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="notes">
+    <p>The event points bonus and the badges bonus are separate. Neither changes CP.</p>
+    <p>Rewards are rounded down per song before they are added up.</p>
+    <p>Free Live: flames 0 to 5 use the game's reward tables. 10 flames is x50, twice the 5 flame reward. Challenge Live: 200 CP is x1, 400 is x2, 800 is x4 and 1,600 is x8. Challenge Live does not give CP.</p>
+    <p>Badges are the event item reward in the tables, and they pay for the event shop. Event points are for clearing event items, not for the shop.</p>
+    <p>Plan both: Free Lives earn the CP that Challenge Lives spend. Each row plays up to one 10 flame Live a day, then one other flame level for the rest of the Free Lives, and one CP level for every Challenge Live.</p>
+    <p>4 and 5 flames are for spenders. F2P shows 0 to 3 flames and the daily 10 flame Live.</p>
+    <p>Events run from Sunday to Saturday. 10 flame Free Lives are once a day, so the days left cap how many you can play. Days left starts from today's date.</p>
+    <p>What you already have is shared by every tab and by the event shop.</p>
+    <p><button type="button" id="resetAll">Reset all settings</button></p>
+  </div>
+</main>
+
+
+<script src="../assets/ui.js"></script>
+<script src="data.js"></script>
+<script src="calc.js"></script>
+<script src="state.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
