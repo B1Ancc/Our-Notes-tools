@@ -22,6 +22,8 @@ a.card:hover, a.card:focus-visible { border-color:var(--accent); outline:none; }
 a.card strong { display:block; font-size:1.1rem; }
 a.card span { color:var(--muted); font-size:14px; }
 small { color:var(--muted); font-size:13px; }
+a.fb { align-self:flex-start; padding:8px 14px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:inherit; font-weight:600; font-size:14px; text-decoration:none; }
+a.fb:hover, a.fb:focus-visible { border-color:var(--accent); outline:none; }
 </style>
 </head>
 <body>
@@ -35,6 +37,8 @@ small { color:var(--muted); font-size:13px; }
     <a class="card" href="live-points/index.html"><strong>Live Points</strong><span>Event points, badges and CP from Free Live and Challenge Live, plus the event shop.</span></a>
   </nav>
   <small>Fan-made and unofficial. Not affiliated with the game or its publisher.</small>
+  <a class="fb" data-feedback hidden>Send feedback</a>
 </main>
+<script src="assets/feedback.js"></script>
 </body>
 </html>

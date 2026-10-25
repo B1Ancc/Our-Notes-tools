@@ -43,6 +43,10 @@ tests/                node:test files
 
 `calc.js`, `state.js` and `data.js` have no DOM code, so the same files run in the browser and in the tests.
 
+## Feedback button
+
+Create a Google Form, copy its share link, and paste it into `FEEDBACK_URL` in `assets/feedback.js`. Until then the button stays hidden. Answers show up in Google Forms, and in Sheets if you link one.
+
 ## Updating when the game changes
 
 - **Live Points rewards, shop items and costs:** edit `live-points/data.js`.
