@@ -2,7 +2,7 @@
    While it is empty the button stays hidden. */
 (function () {
   'use strict';
-  const FEEDBACK_URL = '';
+  const FEEDBACK_URL = 'https://forms.gle/FRgtQi5WbBMppDV6A';
 
   if (!FEEDBACK_URL) return;
   document.querySelectorAll('a[data-feedback]').forEach(a => {
